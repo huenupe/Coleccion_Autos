@@ -1,0 +1,48 @@
+// Prisma schema for Coleccion Autos
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Country {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  brands Brand[]
+}
+
+model Brand {
+  id        Int      @id @default(autoincrement())
+  name      String
+  logoUrl   String?
+  countryId Int
+  country   Country  @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  cars      Car[]
+
+  @@index([countryId])
+  @@unique([name, countryId])
+}
+
+model Car {
+  id                Int      @id @default(autoincrement())
+  name              String
+  brandId           Int
+  brand             Brand    @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  year              Int
+  scale             String
+  estimatedValueCLP Int
+  condition         String
+  editionSeries     String?
+  acquiredAt        DateTime
+  description       String
+  features          String[]
+  images            String[]
+  coverImageIndex   Int      @default(0)
+  isFeatured        Boolean  @default(false)
+  isNew             Boolean  @default(false)
+
+  @@index([brandId])
+}
